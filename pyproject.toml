@@ -1,0 +1,17 @@
+[tool.pyright]
+strict = [
+    "**/hw7"
+]
+reportUnusedImport = false
+
+[tool.ruff]
+select = [
+    "E", "F", "W", "I", 
+    "C90", "N", "D", "UP", 
+    "YTT", "ANN", "S", "FBT", 
+    "B", "A", "C4", "DTZ",
+    "ISC", "ICN", 
+    "PIE", "PYI", "RSE", "RET", "SIM",
+    "TCH", "PTH", "PL", "RUF"
+]
+ignore = ["W293", "D1", "ANN101", "S101", "W191"]
