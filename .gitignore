@@ -1,5 +1,5 @@
-._random_stuff/**
-.data_structures/**
+_random_stuff/
+data_structures/
 *.pyc
 *.pyo
 */__pycache__/
