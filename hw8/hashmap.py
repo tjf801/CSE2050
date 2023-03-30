@@ -68,31 +68,33 @@ class CustomHashMap(Generic[_KT, _VT], MutableMapping[_KT, _VT]):
         table_index = _hash & bit_mask
         perturb = _hash
         
-        while self._table[table_index] is not None and (
-            self._table[table_index].hash != _hash
-            or self._table[table_index].key != key
+        table_item = self._table[table_index]
+        
+        while table_item is not None and (
+            table_item.hash != _hash
+            or table_item.key != key
         ):
-            if self._table[table_index].key is CustomHashMap._DUMMY_VALUE \
+            if table_item.key is CustomHashMap._DUMMY_VALUE \
             and deleted_slot is None:
                 deleted_slot = table_index
             
             table_index = (5 * table_index + perturb + 1) & bit_mask
             perturb >>= CustomHashMap._PERTURB_SHIFT
+            
+            table_item = self._table[table_index]
         
-        entry = self._table[table_index]
-        
-        if entry is None:
-            return deleted_slot or table_index, entry
+        if table_item is None:
+            return deleted_slot or table_index, table_item
         
         # TODO: remove these asserts
         # assert entry.key == key and entry.hash == _hash
         # assert entry.key is not CustomHashMap._DUMMY_VALUE
-        entry = typing.cast(
+        table_item = typing.cast(
             _MapEntry[_KT, _VT],
-            entry
+            table_item
         )
         
-        return table_index, entry
+        return table_index, table_item
     
     def _rehash(self) -> None:
         """Resize the table to increase the maximum capacity.

@@ -77,10 +77,10 @@ class Ledger:
     
     def has_funds(self, user: str, amount: int) -> bool:
         """Check if the given user has at least the given amount of HuskyCoin."""
-        if user not in self._ledger_hashmap:
-            return False
-        
         balance = self._ledger_hashmap.get(user)
+        
+        if balance is None:
+            return False
         
         return balance >= amount
     
@@ -102,7 +102,7 @@ class Ledger:
         
         balance = self._ledger_hashmap.get(user)
         
-        if balance < amount:
+        if balance is not None and balance < amount:
             raise ValueError(f"{user} does not have enough HuskyCoin.")
         
         self._ledger_hashmap[user] -= amount
