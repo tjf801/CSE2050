@@ -1,15 +1,10 @@
 from __future__ import annotations
 
+import enum
 import typing
 from collections.abc import Iterable, Iterator, MutableMapping
 from dataclasses import dataclass
-from typing import Generic, Protocol, TypeVar
-
-if typing.TYPE_CHECKING:
-    import types
-    # Sadly, since python doesnt have type checkable Sentinel types (see PEP 661 for
-    # more info on that), we just have to settle for using ellipsis instead. :(
-    _DummyType: typing.TypeAlias = types.EllipsisType
+from typing import Final, Generic, Literal, Protocol, TypeVar
 
 _KT = TypeVar("_KT", bound=typing.Hashable)
 _KT_co = TypeVar("_KT_co", bound=typing.Hashable, covariant=True)
@@ -27,27 +22,22 @@ class _MapEntry(Generic[_KT_co, _VT_co]):
     key: _KT_co
     value: _VT_co
 
+class _SentinelProvider(enum.Enum):
+    Sentinel = object()
+_DUMMY_VALUE: Final = _SentinelProvider.Sentinel
+
 class CustomHashMap(Generic[_KT, _VT], MutableMapping[_KT, _VT]):
     # NOTE: this takes *heavy* inspiration from python's builtin dict implementation
     
     # class constants
-    _INITIAL_SIZE: int = 8
-    _PERTURB_SHIFT: int = 5
-    _LARGE_DICT_SIZE: int = 50000
-    
-    # NOTE: this is a sentinel value used to mark deleted entries. The reason it is
-    # typed as Ellipsis is because we want to use the type checker to narrow the type
-    # of the key using the `is` operator, which it normally only does with `Ellipsis`,
-    # `True`, `False`, or `None`, since they're all singletons. This also means, that
-    # in order for everything to type check properly, we need to be VERY careful about
-    # using the actual `Ellipsis` value and type, because as far as the type checker
-    # is concerned, they are the same thing!!
-    _DUMMY_VALUE: _DummyType = object() # type: ignore
+    _INITIAL_SIZE: Final = 8
+    _PERTURB_SHIFT: Final = 5
+    _LARGE_DICT_SIZE: Final = 50000
     
     # instance variables
     _capacity: int
     _used: int
-    _table: list[_MapEntry[_KT | _DummyType, _VT] | None]
+    _table: list[_MapEntry[_KT | Literal[_DUMMY_VALUE], _VT] | None]
     
     
     def _lookup(
@@ -74,7 +64,7 @@ class CustomHashMap(Generic[_KT, _VT], MutableMapping[_KT, _VT]):
             table_item.hash != _hash
             or table_item.key != key
         ):
-            if table_item.key is CustomHashMap._DUMMY_VALUE \
+            if table_item.key is _DUMMY_VALUE \
             and deleted_slot is None:
                 deleted_slot = table_index
             
@@ -108,7 +98,7 @@ class CustomHashMap(Generic[_KT, _VT], MutableMapping[_KT, _VT]):
         self._table = [None] * self._capacity
         
         for entry in old_table:
-            if entry is not None and entry.key is not CustomHashMap._DUMMY_VALUE:
+            if entry is not None and entry.key is not _DUMMY_VALUE:
                 index, _ = self._lookup(entry.key)
                 self._table[index] = entry
         
@@ -164,7 +154,7 @@ class CustomHashMap(Generic[_KT, _VT], MutableMapping[_KT, _VT]):
     def __iter__(self) -> Iterator[_KT]:
         # TODO: maybe preserve insertion order?
         for entry in self._table:
-            if entry is not None and entry.key is not CustomHashMap._DUMMY_VALUE:
+            if entry is not None and entry.key is not _DUMMY_VALUE:
                 yield typing.cast(_KT, entry.key)
     
     def __getitem__(self, key: _KT) -> _VT:
@@ -215,6 +205,6 @@ class CustomHashMap(Generic[_KT, _VT], MutableMapping[_KT, _VT]):
         # so we just mark it as deleted by setting the key to `_DUMMY_VALUE`.
         self._table[index] = _MapEntry(
             entry.hash,
-            CustomHashMap._DUMMY_VALUE,
+            _DUMMY_VALUE,
             entry.value
         )
