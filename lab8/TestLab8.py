@@ -1,12 +1,15 @@
+# ruff: noqa
+# pyright: basic
+# pylance: ignore
 import random
 import time
 import typing
 import unittest
 
 if typing.TYPE_CHECKING:
-    from lab8.lab8 import CustomSet as CS  # noqa: N817
+    from lab8.lab8 import CustomSet as CS
 else:
-    from lab8 import CustomSet as CS  # noqa: N817
+    from lab8 import CustomSet as CS
 
 random.seed(658)
 

@@ -19,7 +19,7 @@ class CustomSet(Generic[_T]): #, MutableSet[_T]):
         self._n_buckets = 8
         self._len = 0
         
-        self._L = [[] for _ in range(self._n_buckets)]
+        self._L: list[list[_T]] = [[] for _ in range(self._n_buckets)]
     
     def _find_bucket(self, item: SupportsHash) -> int:
         """Return the index of the bucket `item` should go in based on its hash."""
@@ -33,14 +33,14 @@ class CustomSet(Generic[_T]): #, MutableSet[_T]):
     
     def _rehash(self, new_buckets: int) -> None:
         """Rehash every item from `n_buckets` into `new_buckets`."""
-        new_L = [[] for _ in range(new_buckets)] # noqa: N806
+        new_L: list[list[_T]] = [[] for _ in range(new_buckets)] # noqa: N806
         
         for bucket in self._L:
             for item in bucket:
                 item_idx = hash(item) % new_buckets
                 new_L[item_idx].append(item)
         
-        self._L = new_L
+        self._L = new_L # pyright: ignore [reportConstantRedefinition]
         self._n_buckets = new_buckets
     
     def __len__(self) -> int:

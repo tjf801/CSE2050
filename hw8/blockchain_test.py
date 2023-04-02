@@ -1,4 +1,5 @@
 # ruff: noqa: ANN201
+# pyright: reportPrivateUsage=false
 
 import typing
 import unittest

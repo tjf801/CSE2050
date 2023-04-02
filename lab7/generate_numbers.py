@@ -3,15 +3,11 @@ import random
 
 ##### Generate list of numbers #####
 n = 1000 # Max is 2000 due to memory constraints with quicksort
-L = [random.randint(0, n) for i in range(n)]
+L = [random.randint(0, n) for _ in range(n)] # noqa: S311
 
 ##### Create file to write to #####
-f = open(f"./numbers.txt", "w")
-
-##### Write numbers to file #####
-for item in L:
-    f.write(str(item))
-    f.write(" ")
-
-#### Close the file ####
-f.close()
+with open("./numbers.txt", "w") as f:
+    ##### Write numbers to file #####
+    for item in L:
+        f.write(str(item))
+        f.write(" ")

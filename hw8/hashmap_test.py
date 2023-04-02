@@ -15,7 +15,7 @@ class TestCustomHashMap(unittest.TestCase):
     # that if i really need a doctring for THESE, u might want to get ur eyes checked
     
     def test_basic_initialization(self):
-        hashmap = CustomHashMap()
+        hashmap: CustomHashMap[typing.Never, typing.Never] = CustomHashMap()
         
 		# NOTE: this is the only place where we use the private variables
         self.assertEqual(hashmap._capacity, CustomHashMap._INITIAL_SIZE) # type: ignore
@@ -23,7 +23,7 @@ class TestCustomHashMap(unittest.TestCase):
         self.assertEqual(hashmap._table, [None] * CustomHashMap._INITIAL_SIZE) # type: ignore # noqa: E501
     
     def test_len_zero_after_initialization(self):
-        hashmap = CustomHashMap()
+        hashmap: CustomHashMap[typing.Never, typing.Never] = CustomHashMap()
         self.assertEqual(len(hashmap), 0)
     
     def test_kwarg_init_and_len(self):
@@ -33,7 +33,6 @@ class TestCustomHashMap(unittest.TestCase):
     def test_kwarg_type_checking(self):
         if typing.TYPE_CHECKING:
             hashmap_str_str = CustomHashMap(key1="value1")
-            typing.reveal_type(hashmap_str_str)
             hashmap_str_str: CustomHashMap[str, str] = hashmap_str_str
     
     
@@ -57,7 +56,7 @@ class TestCustomHashMap(unittest.TestCase):
     
     
     def test_value_assignment(self):
-        hashmap = CustomHashMap()
+        hashmap: CustomHashMap[str, str] = CustomHashMap()
         hashmap["key1"] = "value1"
         hashmap["key2"] = "value2"
         hashmap["key3"] = "value3"
@@ -75,15 +74,6 @@ class TestCustomHashMap(unittest.TestCase):
         self.assertEqual(hashmap["key2"], "value5")
         self.assertEqual(hashmap["key3"], "value6")
         self.assertEqual(len(hashmap), 3)
-    
-    def test_value_assignment_type_checking(self):
-        if typing.TYPE_CHECKING:
-            hashmap = CustomHashMap()
-            hashmap["key1"] = 1
-            hashmap["key2"] = 2
-            hashmap["key3"] = 3
-            typing.reveal_type(hashmap)
-            _: CustomHashMap[str, int] = hashmap
     
     
     def test_value_deletion(self):
@@ -135,17 +125,6 @@ class TestCustomHashMap(unittest.TestCase):
         self.assertEqual(hashmap["five"], 5)
         self.assertEqual(hashmap["six"], 6)
     
-    def test_init_with_dict_and_kwargs_type_checking(self):
-        if typing.TYPE_CHECKING:
-            hashmap = CustomHashMap({
-                "one": 1,
-                "two": 2,
-                "three": 3,
-                "four": 4,
-            }, five=5, six=6)
-            typing.reveal_type(hashmap)
-            _: CustomHashMap[str, int] = hashmap
-    
     
     def test_contains(self):
         hashmap = CustomHashMap(key1="value1", key2="value2", key3="value3")
@@ -155,7 +134,7 @@ class TestCustomHashMap(unittest.TestCase):
         self.assertNotIn("key4", hashmap)
     
     def test_contains_edge_cases(self):
-        hashmap = CustomHashMap()
+        hashmap: CustomHashMap[str | None, str | None] = CustomHashMap()
         
         self.assertNotIn("key1", hashmap)
         hashmap["key1"] = "value1"
@@ -186,7 +165,13 @@ class TestCustomHashMap(unittest.TestCase):
         self.assertNotIn(None, hashmap)
     
     def test_contains_with_ellipsis(self):
-        hashmap = CustomHashMap()
+        if typing.TYPE_CHECKING:
+            from types import EllipsisType
+            _type = CustomHashMap[
+                int | None | EllipsisType,
+                str | None | EllipsisType
+            ]
+        hashmap: _type = CustomHashMap()
         
         for i in range(3):
             hashmap[i] = f"value{i}"

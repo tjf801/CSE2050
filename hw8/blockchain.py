@@ -172,7 +172,7 @@ class Blockchain:
         new_block = Block(previous_block_hash, transactions)
         
         # make a copy of the ledger to avoid modifying the original (verified) ledger
-        new_ledger_map = Ledger(CustomHashMap(self._bc_ledger._ledger_hashmap))
+        new_ledger_map = Ledger(CustomHashMap(self._bc_ledger._ledger_hashmap)) # type: ignore # noqa: E501
         self._blockchain.append(new_block)
         
         for transaction in transactions:

@@ -1,6 +1,17 @@
 [tool.pyright]
+strictListInference = true
+strictDictionaryInference = true
+strictSetInference = true
+# typeCheckingMode = "strict"
 strict = [
-    "**/hw7"
+    "**/lab7", "**/hw7",
+    "**/lab8", "**/hw8",
+    "**/lab9", "**/hw9",
+    "**/lab10", "**/hw10",
+    "**/lab11", "**/hw11",
+    "**/lab12", "**/hw12",
+    "**/lab13", "**/hw13",
+    "**/lab14", "**/hw14"
 ]
 reportUnusedImport = false
 
@@ -14,4 +25,4 @@ select = [
     "PIE", "PYI", "RSE", "RET", "SIM",
     "TCH", "PTH", "PL", "RUF"
 ]
-ignore = ["W293", "D1", "ANN101", "S101", "W191"]
+ignore = ["W293", "D1", "ANN101", "S101", "W191", "PTH123"]
