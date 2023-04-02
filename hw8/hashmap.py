@@ -24,7 +24,7 @@ class _MapEntry(Generic[_KT_co, _VT_co]):
 
 class _SentinelProvider(enum.Enum):
     Sentinel = object()
-_DUMMY_VALUE: Final = _SentinelProvider.Sentinel
+_DUMMY_VALUE: Final[Literal[_SentinelProvider.Sentinel]] = _SentinelProvider.Sentinel
 
 class CustomHashMap(Generic[_KT, _VT], MutableMapping[_KT, _VT]):
     # NOTE: this takes *heavy* inspiration from python's builtin dict implementation
@@ -203,7 +203,7 @@ class CustomHashMap(Generic[_KT, _VT], MutableMapping[_KT, _VT]):
         # NOTE: we need to keep the entry in the table so that the lookup algorithm can
         # still find the items with the same hash that are further down the chain. and
         # so we just mark it as deleted by setting the key to `_DUMMY_VALUE`.
-        self._table[index] = _MapEntry(
+        self._table[index] = _MapEntry( # type: ignore # this is a pyright bug.
             entry.hash,
             _DUMMY_VALUE,
             entry.value
