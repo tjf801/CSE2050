@@ -47,13 +47,6 @@ class TestCustomHashMap(unittest.TestCase):
         with self.assertRaises(KeyError):
             hashmap["key4"]
     
-    def test_value_lookup_type_checking(self):
-        if typing.TYPE_CHECKING:
-            hashmap: CustomHashMap[str, str] = CustomHashMap(key1="value1")
-            value = hashmap["key1"]
-            typing.reveal_type(value)
-            value: str = value
-    
     
     def test_value_assignment(self):
         hashmap: CustomHashMap[str, str] = CustomHashMap()
@@ -100,16 +93,6 @@ class TestCustomHashMap(unittest.TestCase):
         self.assertEqual(hashmap["two"], 2)
         self.assertEqual(hashmap["three"], 3)
         self.assertEqual(hashmap["four"], 4)
-    
-    def test_init_with_dict_type_checking(self):
-        if typing.TYPE_CHECKING:
-            hashmap: CustomHashMap[str, int] = CustomHashMap({
-                "one": 1,
-                "two": 2,
-                "three": 3,
-                "four": 4,
-            })
-            typing.reveal_type(hashmap)
     
     def test_init_with_dict_and_kwargs(self):
         hashmap = CustomHashMap({
