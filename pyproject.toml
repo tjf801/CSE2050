@@ -9,9 +9,6 @@ strict = [
     "**/lab9", "**/hw9",
     "**/lab10", "**/hw10",
     "**/lab11", "**/hw11",
-    "**/lab12", "**/hw12",
-    "**/lab13", "**/hw13",
-    "**/lab14", "**/hw14"
 ]
 reportUnusedImport = false
 
