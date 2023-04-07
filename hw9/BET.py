@@ -78,10 +78,10 @@ class CardType(Enum):
 class OperatorType(Enum):
     """An enumeration of the operators that can be used in a binary expression."""
     
-    ADD = '+'
-    SUBTRACT = '-'
-    MULTIPLY = '*'
-    DIVIDE = '/'
+    ADD = -1
+    SUBTRACT = -2
+    MULTIPLY = -3
+    DIVIDE = -4
     
     def __str__(self) -> str:
         return {
@@ -93,12 +93,25 @@ class OperatorType(Enum):
     
     @classmethod
     def from_str(cls: type[OperatorType], __value: str) -> OperatorType:
-        return {
-            '+': cls.ADD,
-            '-': cls.SUBTRACT,
-            '*': cls.MULTIPLY,
-            '/': cls.DIVIDE
-        }[__value]
+        """Convert a string to an OperatorType.
+
+        Raises
+        ------
+        ValueError
+            If the string is not a valid operator type. Valid operator types are:
+            ('+', '-', '*', '/')
+        """
+        match __value:
+            case '+':
+                return cls.ADD
+            case '-':
+                return cls.SUBTRACT
+            case '*':
+                return cls.MULTIPLY
+            case '/':
+                return cls.DIVIDE
+            case _:
+                raise ValueError(f"Invalid operator type '{__value}'")
 
 
 class BinaryExpressionTreeNode(abc.ABC):

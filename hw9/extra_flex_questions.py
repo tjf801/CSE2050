@@ -4,7 +4,7 @@ from BET import find_solutions
 
 
 def answer_questions() -> tuple[
-    tuple[tuple[str, ...], int],
+    tuple[list[tuple[str, ...]], int],
     float,
     float
 ]:
@@ -28,12 +28,20 @@ def answer_questions() -> tuple[
     * the best hand is ('A', '4', '8', 'Q'), with 335 solutions
     * the probability of no solutions is 25.16%
     * the probability of exactly one solution is 0.879%
+    
+    Addendum 2
+    ----------
+    After running this function again with five cards, which took at least 6 hours on my
+    computer (I don't know how long exactly bc I left it running overnight), I found:
+    * the best hand is ('A', 'A', '4', '8', 'Q'), with 6003 solutions
+    * the probability of no solutions is 1.36%
+    * the probability of exactly one solution is 0.178%
     """
     valid_cards = ('A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K')
     
     cards_by_num_solutions: dict[int, list[tuple[str, ...]]] = {}
     
-    for cards in combinations_with_replacement(valid_cards, 4):
+    for cards in combinations_with_replacement(valid_cards, 5):
         print(f'Checking {cards}...', end='\r')
         num_solutions = sum(1 for _ in find_solutions(cards))
         if num_solutions not in cards_by_num_solutions:
@@ -46,14 +54,18 @@ def answer_questions() -> tuple[
     total_solutions = sum(len(cards) for cards in cards_by_num_solutions.values())
     
     return (
-        (cards_by_num_solutions[max_num_solutions][0], max_num_solutions),
+        (cards_by_num_solutions[max_num_solutions], max_num_solutions),
         num_zero_solution / total_solutions,
         num_one_solution / total_solutions
     )
 
 def main() -> None:
-    (cards, max_sols), zero_prob, one_prob = answer_questions()
-    print(f'Cards with most solutions: {cards}, with {max_sols} solutions')
+    import time
+    start = time.time()
+    (hands, max_sols), zero_prob, one_prob = answer_questions()
+    print(f'Finished in {time.time() - start:.2f} seconds')
+    for cards in hands:
+        print(f'Cards with most solutions: {cards}, with {max_sols} solutions')
     print(f'Probability of no solutions: {zero_prob}')
     print(f'Probability of one solution: {one_prob}')
 
