@@ -22,4 +22,4 @@ select = [
     "PIE", "PYI", "RSE", "RET", "SIM",
     "TCH", "PTH", "PL", "RUF"
 ]
-ignore = ["W293", "D1", "ANN101", "S101", "W191", "PTH123"]
+ignore = ["W293", "D1", "ANN101", "S101", "W191", "PTH123", "PLR2004"]
